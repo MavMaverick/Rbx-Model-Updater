@@ -1,16 +1,19 @@
-local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinderResize,cframeMove, transferProps, transferPropsWedge)
 
+debugVar = true
+--debugVar = false
+
+
+local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinderResize,cframeMove, transferProps, transferPropsWedge)
 	local mesh = part:FindFirstChild("Mesh")
-	print("MESH: ", mesh)
+	print("MESH:", mesh)
 	if mesh then
 		if part.Mesh.ClassName == "CylinderMesh" then
 			local newPart = Instance.new("Part")
 			newPart.Shape = Enum.PartType.Cylinder
-			
+
 			local partOffsetX = part.Mesh.Offset.X
 			local partOffsetY = part.Mesh.Offset.Y
 			local partOffsetZ = part.Mesh.Offset.Z
-			
 			local partSizeX = part.Size.X
 			local partSizeY = part.Size.Y
 			local partSizeZ = part.Size.Z
@@ -20,52 +23,55 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 			partSizeX *= meshSizeX
 			partSizeY *= meshSizeY
 			partSizeZ *= meshSizeZ
-			
+
 			local partRotateX = part.Rotation.X
 			local partRotateY = part.Rotation.Y
 			local partRotateZ = part.Rotation.Z
 			partRotateZ -= 90
-			
+
 			local partPosX = part.Position.X
 			local partPosY = part.Position.Y
 			local partPosZ = part.Position.Z
 
-			
+
 			local localOffset = Vector3.new(-partOffsetX, -partOffsetY, partOffsetZ) -- The desired local offset on the x-axis
 			local currentCFrame = part.CFrame
 			local orientation = currentCFrame - currentCFrame.Position
 			local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 			local newCFrame = CFrame.new(newPosition, orientation.LookVector)
-			
+
 			cylinderResize(partSizeX, partSizeZ)
-			
+
 			newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
 			newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 			newPart.CFrame = newCFrame
 			newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-			newPart.Anchored = part.Anchored
+			newPart.Anchored = true
 			newPart.Material = part.Material
-			newPart.Color = part.Color
+			if debugVar == true then
+				newPart.Color = Color3.fromRGB(255, 85, 0)
+			else
+				newPart.Color = part.Color
+			end
 			newPart.Transparency = part.Transparency
 			newPart.Reflectance = part.Reflectance
 			newPart.CanCollide = part.CanCollide
 			newPart.Locked = part.Locked
 			newPart.Name = part.Name
-			newPart.Color = part.Color
 			newPart.BottomSurface = Enum.SurfaceType.Smooth
 			newPart.TopSurface = Enum.SurfaceType.Smooth
 			newPart.Parent = workspace
 			print("Cylindermesh")
 			return
 
-			
+
 		elseif part.Mesh.ClassName == "BlockMesh" then
 			local newPart = Instance.new("Part")
 			local partOffsetX = part.Mesh.Offset.X
 			local partOffsetY = part.Mesh.Offset.Y
 			local partOffsetZ = part.Mesh.Offset.Z
 
-			
+
 			local partSizeX = part.Size.X
 			local meshSizeX = part.Mesh.Scale.X
 			partSizeX *= meshSizeX
@@ -85,26 +91,29 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 			partPosX += partOffsetY
 			local partPosY = part.Position.Y
 			local partPosZ = part.Position.Z
-			
+
 			local localOffset = Vector3.new(-partOffsetX, -partOffsetY, partOffsetZ) -- The desired local offset on the x-axis
 			local currentCFrame = part.CFrame
 			local orientation = currentCFrame - currentCFrame.Position
 			local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 			local newCFrame = CFrame.new(newPosition, orientation.LookVector)
-			
+
 			newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
 			newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 			newPart.CFrame = newCFrame
 			newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-			newPart.Anchored = part.Anchored
+			newPart.Anchored = true
 			newPart.Material = part.Material
-			newPart.Color = part.Color
+			if debugVar == true then
+				newPart.Color = Color3.fromRGB(85, 255, 255)
+			else
+				newPart.Color = part.Color
+			end
 			newPart.Transparency = part.Transparency
 			newPart.Reflectance = part.Reflectance
 			newPart.CanCollide = part.CanCollide
 			newPart.Locked = part.Locked
 			newPart.Name = part.Name
-			newPart.Color = part.Color
 			newPart.BottomSurface = Enum.SurfaceType.Smooth
 			newPart.TopSurface = Enum.SurfaceType.Smooth
 			newPart.Parent = workspace
@@ -112,7 +121,7 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 			return
 
 
-			
+
 		elseif part.Mesh.ClassName == "SpecialMesh" then
 			local newPart
 
@@ -143,19 +152,19 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 				--partPosX += 10
 				local partPosY = part.Position.Y
 				local partPosZ = part.Position.Z
-				
+
 				local localOffset = Vector3.new(0, 0, 0) -- The desired local offset on the x-axis
 				local currentCFrame = part.CFrame
 				local orientation = currentCFrame - currentCFrame.Position
 				local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 				local newCFrame = CFrame.new(newPosition, orientation.LookVector)
-				
+
 				newPart.Size = Vector3.new(partSizeX, partSizeY, partSizeZ)
 				newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 				newPart.CFrame = newCFrame
 				print("Wedgepart before ", partRotateX, partRotateY, partRotateZ)
 				newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-				newPart.Anchored = part.Anchored
+				newPart.Anchored = true
 				newPart.Material = part.Material
 				--newPart.Color = part.Color
 				newPart.Transparency = part.Transparency
@@ -163,7 +172,11 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 				newPart.CanCollide = part.CanCollide
 				newPart.Locked = part.Locked
 				newPart.Name = part.Name
-				newPart.Color = Color3.fromRGB(255, 107, 154)
+				if debugVar == true then
+					newPart.Color = Color3.fromRGB(163, 0, 244)
+				else
+					newPart.Color = part.Color
+				end
 				newPart.BottomSurface = Enum.SurfaceType.Smooth
 				newPart.TopSurface = Enum.SurfaceType.Smooth
 
@@ -175,9 +188,9 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 
 			elseif part.Mesh.MeshType == Enum.MeshType.Cylinder then
 				newPart = Instance.new("CylnderPart")
-				
+
 				local partOffsetY = part.Mesh.Offset.Y
-				
+
 				local partSizeX = part.Size.X
 				local meshSizeX = part.Mesh.Scale.X
 				partSizeX *= meshSizeX
@@ -196,29 +209,37 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 				local partPosX = part.Position.X
 				local partPosY = part.Position.Y
 				local partPosZ = part.Position.Z
-				
+
 
 				local localOffset = Vector3.new(0, -partOffsetY, 0) -- The desired local offset on the x-axis
 				local currentCFrame = part.CFrame
 				local orientation = currentCFrame - currentCFrame.Position
 				local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 				local newCFrame = CFrame.new(newPosition, orientation.LookVector)
-				
+
 				cylinderResize(partSizeX, partSizeZ)
 				newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
 				newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 				newPart.CFrame = newCFrame
 				newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-				newPart.Anchored = part.Anchored
+				newPart.Anchored = true
 				newPart.Material = part.Material
-				newPart.Color = part.Color
+				if debugVar == true then
+					newPart.Color = Color3.fromRGB(255, 85, 127)
+				else
+					newPart.Color = part.Color
+				end
 				newPart.Transparency = part.Transparency
 				newPart.Reflectance = part.Reflectance
 				newPart.CanCollide = part.CanCollide
 				newPart.Locked = part.Locked
 				newPart.Name = part.Name
 				--newPart.Color = part.Color
-				newPart.Color = Color3.fromRGB(10, 255, 39)
+				if debugVar == true then
+					newPart.Color = Color3.fromRGB(255, 245, 207)
+				else
+					newPart.Color = part.Color
+				end
 				newPart.BottomSurface = Enum.SurfaceType.Smooth
 				newPart.TopSurface = Enum.SurfaceType.Smooth
 				newPart.Parent = workspace
@@ -246,7 +267,7 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 					local partRotateY = part.Orientation.Y
 					partRotateY += 90
 					local partRotateZ = part.Orientation.Z
-					
+
 					--GAZ
 					partRotateZ -= partRotateZ * -2
 
@@ -268,18 +289,21 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 					newPart.CFrame = newCFrame
 					--print("ROTATIONNNNNNN ",partRotateX, partRotateY, partRotateZ)
 					newPart.Orientation = Vector3.new(partRotateZ, partRotateY, partRotateX)
-					newPart.Anchored = part.Anchored
+					newPart.Anchored = true
 					newPart.Material = part.Material
-					newPart.Color = part.Color
+					if debugVar == true then
+						newPart.Color = Color3.fromRGB(170, 170, 255)
+					else
+						newPart.Color = part.Color
+					end
 					newPart.Transparency = part.Transparency
 					newPart.Reflectance = part.Reflectance
 					newPart.CanCollide = part.CanCollide
 					newPart.Locked = part.Locked
 					newPart.Name = part.Name
-					newPart.Color = part.Color
 					newPart.BottomSurface = Enum.SurfaceType.Smooth
 					newPart.TopSurface = Enum.SurfaceType.Smooth
-					
+
 					local selectionBox = Instance.new("SelectionBox")
 					selectionBox.Adornee = newPart
 					selectionBox.Parent = newPart
@@ -320,7 +344,7 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 					newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 					newPart.CFrame = newCFrame
 					newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-					newPart.Anchored = part.Anchored
+					newPart.Anchored = true
 					newPart.Material = part.Material
 					newPart.Color = part.Color
 					newPart.Transparency = part.Transparency
@@ -328,8 +352,11 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 					newPart.CanCollide = part.CanCollide
 					newPart.Locked = part.Locked
 					newPart.Name = part.Name
-					--newPart.Color = part.Color
-					newPart.Color = Color3.fromRGB(241, 255, 87)
+					if debugVar == true then
+						newPart.Color = Color3.fromRGB(252, 255, 101)
+					else
+						newPart.Color = part.Color
+					end
 					newPart.BottomSurface = Enum.SurfaceType.Smooth
 					newPart.TopSurface = Enum.SurfaceType.Smooth
 					local specialMesh = Instance.new("SpecialMesh")
@@ -349,7 +376,7 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 					newPart.Parent = workspace
 					return
 				end
-				
+
 			elseif part.Mesh.MeshType == Enum.MeshType.Head then
 				newPart = Instance.new("Part")
 				local partSizeX = part.Size.X
@@ -379,20 +406,28 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 				local orientation = currentCFrame - currentCFrame.Position
 				local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 				local newCFrame = CFrame.new(newPosition, orientation.LookVector)
-				
+
 				newPart.Size = Vector3.new(partSizeX, partSizeY, partSizeZ)
 				newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 				newPart.CFrame = newCFrame
 				newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-				newPart.Anchored = part.Anchored
+				newPart.Anchored = true
 				newPart.Material = part.Material
-				newPart.Color = part.Color
+				if debugVar == true then
+					newPart.Color = Color3.fromRGB(0, 93, 140)
+				else
+					newPart.Color = part.Color
+				end
 				newPart.Transparency = part.Transparency
 				newPart.Reflectance = part.Reflectance
 				newPart.CanCollide = part.CanCollide
 				newPart.Locked = part.Locked
 				newPart.Name = part.Name
-				newPart.Color = part.Color
+				if debugVar == true then
+					newPart.Color = Color3.fromRGB(255, 0, 0)
+				else
+					newPart.Color = part.Color
+				end
 				newPart.BottomSurface = Enum.SurfaceType.Smooth
 				newPart.TopSurface = Enum.SurfaceType.Smooth
 				local specialMesh = Instance.new("SpecialMesh")
@@ -415,24 +450,32 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 			else
 				print("UNSUPPORTED SPECIAL MESH/////////////////")
 				local dupedPart = part:Clone()
+				dupedPart.Color = Color3.fromRGB(49, 255, 17)
+				dupedPart.Anchored = true
 				dupedPart.Parent = workspace
-				
+
 			end
-			
+
 		end
 		print("oppa gangnam")
 	else
 		print("Not a mesh")
 
-		local dupedPart = part:Clone()
-		dupedPart.Color = Color3.fromRGB(53, 255, 17)
-		dupedPart.Parent = workspace
+		local newPart = part:Clone()
+		newPart.Color = Color3.fromRGB(53, 255, 17)
+		newPart.Anchored = true
+		if debugVar == true then
+			newPart.Color = Color3.fromRGB(0, 93, 140)
+		else
+			newPart.Color = part.Color
+		end
+		newPart.Parent = workspace
 		return
 	end
 	print("Unsupported")
 
-	
-	
+
+
 end
 
 local function transferProps(part)	-- Works with cylinderMesh but wedges
@@ -455,7 +498,7 @@ local function transferProps(part)	-- Works with cylinderMesh but wedges
 	--partPosX += 10
 	local partPosY = part.Position.Y
 	local partPosZ = part.Position.Z
-	
+
 	return partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ
 end
 
@@ -513,12 +556,12 @@ end
 
 
 local function assignProps(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
-	
+
 	newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
 	newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 	newPart.CFrame = newCFrame
 	newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-	newPart.Anchored = part.Anchored
+	newPart.Anchored = true
 	newPart.Material = part.Material
 	newPart.Color = part.Color
 	newPart.Transparency = part.Transparency
@@ -538,7 +581,7 @@ local function assignPropsWedge(newPart, part, partSizeX, partSizeY, partSizeZ, 
 	newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 	newPart.CFrame = newCFrame
 	newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-	newPart.Anchored = part.Anchored
+	newPart.Anchored = true
 	newPart.Material = part.Material
 	newPart.Color = part.Color
 	newPart.Transparency = part.Transparency
