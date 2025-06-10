@@ -18,11 +18,21 @@ local function debugColor (newPart, COLOR, part)
 		newPart.Color = part.Color
 	end
 end
+
+-- This function adds a selection box to make identification easie
+local function debugSelectionBox(newPart, enabled)
+	if enabled == true then
+		local selectionBox = Instance.new("SelectionBox")
+		selectionBox.Adornee = newPart
+		selectionBox.Parent = newPart
+		selectionBox.LineThickness = .01
+	end
+end
 	
 local function replacePartWithMesh(part, assignProps, cylinderResize,cframeMove)
 	local mesh = part:FindFirstChild("Mesh")
-	print("   MESH:")
 	if mesh then
+		print("   MESH:")
 		if part.Mesh.ClassName == "CylinderMesh" then
 			local newPart = Instance.new("Part")
 			newPart.Shape = Enum.PartType.Cylinder
@@ -196,31 +206,22 @@ local function replacePartWithMesh(part, assignProps, cylinderResize,cframeMove)
 				newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 				newPart.CFrame = newCFrame
 				newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-				newPart.Anchored = true
-				newPart.Material = part.Material
-				if debugVar == true then
-					newPart.Color = Color3.fromRGB(255, 85, 127)
-				else
-					newPart.Color = part.Color
-				end
-				newPart.Transparency = part.Transparency
-				newPart.Reflectance = part.Reflectance
-				newPart.CanCollide = part.CanCollide
-				newPart.Locked = part.Locked
-				newPart.Name = part.Name
+				
+				assignProps(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
 				debugColor(newPart, cylMeshCOLOR, part)
-				newPart.BottomSurface = Enum.SurfaceType.Smooth
-				newPart.TopSurface = Enum.SurfaceType.Smooth
+
 				newPart.Parent = workspace
+				
 				print("      Cylinder speciaslmesh")
 				return
-
+					
 			elseif part.Mesh.MeshType == Enum.MeshType.FileMesh then
 				if part.Mesh.MeshId == "http://www.roblox.com/Asset/?id=9755053" then
 					part.Position = part.Position
 					part.Rotation = part.Rotation
 
 					newPart = Instance.new("CornerWedgePart")
+					
 					local partSizeX = part.Size.X
 					local meshSizeX = part.Mesh.Scale.X
 					local partSizeY = part.Size.Y
@@ -252,12 +253,9 @@ local function replacePartWithMesh(part, assignProps, cylinderResize,cframeMove)
 					newPart.Orientation = Vector3.new(partRotateZ, partRotateY, partRotateX)
 
 					assignProps(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
-					local selectionBox = Instance.new("SelectionBox")
-					selectionBox.Adornee = newPart
-					selectionBox.Parent = newPart
-					selectionBox.LineThickness = .04
 					debugColor(newPart, cornwedgMeshCOLOR, part)
-					
+					debugSelectionBox(newPart, true)
+
 					newPart.Parent = workspace
 					print("      Cornerwedgepart from filemesh Completed")
 				else
@@ -302,10 +300,7 @@ local function replacePartWithMesh(part, assignProps, cylinderResize,cframeMove)
 					specialMesh.Scale = part.Mesh.Scale -- Adjust the scale as needed
 
 					--Selection box for checking true-size of cylinders.
-					local selectionBox = Instance.new("SelectionBox")
-					selectionBox.Adornee = newPart
-					selectionBox.Parent = newPart
-					selectionBox.LineThickness = .01
+					debugSelectionBox(newPart, true)
 					newPart.Parent = workspace
 					
 					print("      Filemesh part")
@@ -355,10 +350,8 @@ local function replacePartWithMesh(part, assignProps, cylinderResize,cframeMove)
 				print("      Head part")
 
 				--Selection box for checking true-size of cylinders.
-				local selectionBox = Instance.new("SelectionBox")
-				selectionBox.Adornee = newPart
-				selectionBox.Parent = newPart
-				selectionBox.LineThickness = .04
+				debugSelectionBox(newPart, true)
+				
 				newPart.Parent = workspace
 				return
 
@@ -379,6 +372,7 @@ local function replacePartWithMesh(part, assignProps, cylinderResize,cframeMove)
 		newPart.Anchored = true
 		debugColor(newPart, cylMeshCOLOR, part)
 		newPart.Parent = workspace
+		print("      Part cloned")
 		return
 	end
 	print("Unsupported")
@@ -437,7 +431,7 @@ local function processModel(model)
 			-- If the child is a Model, process it recursively
 			processModel(child)
 		elseif child:IsA("Part") or child:IsA("WedgePart") or child:IsA("CornerWedgePart") then
-			print("Proccessing", child, "number: ", counter)
+			print("PROCCESSING", child, "NUMBER: ", counter)
 			-- If the child is a Part, check for a mesh and replace if necessary
 			replacePartWithMesh(child, assignProps, cylinderResize, cframeMove)
 
