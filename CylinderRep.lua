@@ -55,27 +55,16 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 			local orientation = currentCFrame - currentCFrame.Position
 			local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 			local newCFrame = CFrame.new(newPosition, orientation.LookVector)
-
+			
+			--cylinders act a bit weird so we resize
 			cylinderResize(partSizeX, partSizeZ)
-
-			newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
-			newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
-			newPart.CFrame = newCFrame
-			newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-			newPart.Anchored = true
-			newPart.Material = part.Material
+			--Here we copy over the original part values to our replacement
+			assignProps(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
+			--Debug color if enabled, otherwise copy over color
 			debugColor(newPart, cylMeshCOLOR, part)
-			newPart.Transparency = part.Transparency
-			newPart.Reflectance = part.Reflectance
-			newPart.CanCollide = part.CanCollide
-			newPart.Locked = part.Locked
-			newPart.Name = part.Name
-			newPart.BottomSurface = Enum.SurfaceType.Smooth
-			newPart.TopSurface = Enum.SurfaceType.Smooth
 			newPart.Parent = workspace
 			print("Cylindermesh")
 			return
-
 
 		elseif part.Mesh.ClassName == "BlockMesh" then
 			local newPart = Instance.new("Part")
@@ -110,20 +99,9 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 			local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 			local newCFrame = CFrame.new(newPosition, orientation.LookVector)
 
-			newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
-			newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
-			newPart.CFrame = newCFrame
-			newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-			newPart.Anchored = true
-			newPart.Material = part.Material
+			assignProps(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
 			debugColor(newPart, blocMeshCOLOR, part)
-			newPart.Transparency = part.Transparency
-			newPart.Reflectance = part.Reflectance
-			newPart.CanCollide = part.CanCollide
-			newPart.Locked = part.Locked
-			newPart.Name = part.Name
-			newPart.BottomSurface = Enum.SurfaceType.Smooth
-			newPart.TopSurface = Enum.SurfaceType.Smooth
+			
 			newPart.Parent = workspace
 			print("Blockmesh")
 			return
@@ -159,21 +137,8 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 				local newPosition = currentCFrame.Position - (orientation.RightVector * localOffset.X) - (orientation.UpVector * localOffset.Y) - (orientation.LookVector * localOffset.Z)
 				local newCFrame = CFrame.new(newPosition, orientation.LookVector)
 
-				newPart.Size = Vector3.new(partSizeX, partSizeY, partSizeZ)
-				newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
-				newPart.CFrame = newCFrame
-				print("Wedgepart before ", partRotateX, partRotateY, partRotateZ)
-				newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
-				newPart.Anchored = true
-				newPart.Material = part.Material
-				newPart.Transparency = part.Transparency
-				newPart.Reflectance = part.Reflectance
-				newPart.CanCollide = part.CanCollide
-				newPart.Locked = part.Locked
-				newPart.Name = part.Name
+				assignPropsWedge(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
 				debugColor(newPart, wedgeSpecMeshCOLOR, part)
-				newPart.BottomSurface = Enum.SurfaceType.Smooth
-				newPart.TopSurface = Enum.SurfaceType.Smooth
 				newPart.Parent = workspace
 				print("Wedgepart final", partRotateX, partRotateY, partRotateZ)
 				return
@@ -381,6 +346,7 @@ local function replacePartWithMesh(part, assignProps, assignPropsWedge, cylinder
 				debugColor(newPart, cylMeshCOLOR, part)
 				newPart.BottomSurface = Enum.SurfaceType.Smooth
 				newPart.TopSurface = Enum.SurfaceType.Smooth
+				
 				local specialMesh = Instance.new("SpecialMesh")
 				specialMesh.Parent = newPart
 				-- Set the properties of the SpecialMesh
@@ -501,34 +467,28 @@ end
 
 
 local function assignProps(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
-
 	newPart.Size = Vector3.new(partSizeY, partSizeX, partSizeZ)
 	newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 	newPart.CFrame = newCFrame
 	newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
 	newPart.Anchored = true
 	newPart.Material = part.Material
-	newPart.Color = part.Color
 	newPart.Transparency = part.Transparency
 	newPart.Reflectance = part.Reflectance
 	newPart.CanCollide = part.CanCollide
 	newPart.Locked = part.Locked
 	newPart.Name = part.Name
-	newPart.Color = part.Color
 	newPart.BottomSurface = Enum.SurfaceType.Smooth
 	newPart.TopSurface = Enum.SurfaceType.Smooth
-	newPart.Parent = workspace
 end
 
 local function assignPropsWedge(newPart, part, partSizeX, partSizeY, partSizeZ, partRotateX, partRotateY, partRotateZ, partPosX, partPosY, partPosZ, newCFrame)
-
 	newPart.Size = Vector3.new(partSizeX, partSizeY, partSizeZ)
 	newPart.Position = Vector3.new(partPosX, partPosY, partPosZ)
 	newPart.CFrame = newCFrame
 	newPart.Rotation = Vector3.new(partRotateX, partRotateY, partRotateZ)
 	newPart.Anchored = true
 	newPart.Material = part.Material
-	newPart.Color = part.Color
 	newPart.Transparency = part.Transparency
 	newPart.Reflectance = part.Reflectance
 	newPart.CanCollide = part.CanCollide
@@ -537,8 +497,6 @@ local function assignPropsWedge(newPart, part, partSizeX, partSizeY, partSizeZ, 
 	newPart.Color = part.Color
 	newPart.BottomSurface = Enum.SurfaceType.Smooth
 	newPart.TopSurface = Enum.SurfaceType.Smooth
-
-	newPart.Parent = workspace
 end
 
 
